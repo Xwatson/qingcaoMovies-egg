@@ -19,9 +19,27 @@ class UpdateCache extends Subscription {
     try {
       this.proxyIndex = 0;
       this.proxys = await getProxy();
-      this.startGetNewMovies();
+      this.startSearch('捉妖记2');
     } catch (e) {
       console.log('getProxy error：', typeof e, e);
+    }
+  }
+  async startSearch(title) {
+    if (this.proxys.length) {
+      try {
+        const movie = await aayyq.search(title, this.proxys[this.proxyIndex]);
+        const _create = this.ctx.model.Movies.create(movie);
+        console.log('获取到movies：', movie);
+        console.log('创建：', _create);
+      } catch (e) {
+        console.log('ERR：', e);
+        if (e.toString().indexOf('TimeoutError') > -1 || e.code === responseCode.proxyUnavailable) {
+          this.proxyIndex++;
+          this.startSearch('捉妖记2');
+        }
+      }
+    } else {
+      console.log('错误：未获取到代理。');
     }
   }
   async startGetNewMovies() {
