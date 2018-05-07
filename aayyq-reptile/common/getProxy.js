@@ -14,7 +14,7 @@ module.exports = async () => {
       .setChromeOptions(
         new chrome.Options().headless().windowSize({ width, height }))
       .build();
-    await driver.get('http://www.xicidaili.com/nt/');
+    await driver.get('http://www.xicidaili.com/nn/');
     const $ = cheerio.load(await driver.findElement(By.tagName('body')).getAttribute('innerHTML'));
     const ips = [];
     $('#ip_list tr').each(function() {

@@ -1,6 +1,6 @@
 'use strict';
 
-const { Builder } = require('selenium-webdriver');
+const { Builder, until, By } = require('selenium-webdriver');
 const { Options } = require('selenium-webdriver/chrome');
 const { HOST, responseCode } = require('./common/common');
 const SearchMobile = require('./search/searchMobile');
@@ -22,13 +22,15 @@ const search = async (title = '', proxy) => {
         bypass: null,
       }))
       .build();
-    // await driver.manage().setTimeouts({ pageLoad: 5000 });
+    await driver.manage().setTimeouts({ pageLoad: 1000 * 60 });
     await driver.get(HOST);
+    await driver.wait(until.elementLocated(By.className('aHeaderSearch')), 3000);
     if (!/YY4480影院官网/.test(await driver.getTitle())) {
       await driver.quit();
       console.log(`代理：${proxy.ip}:${proxy.port}-${proxy.city} 不可用.`);
       throw new Error({ code: responseCode.proxyUnavailable });
     }
+    console.log('正在使用代理：', `${proxy.ip}:${proxy.port}-${proxy.city}`);
     const search = new SearchMobile(driver);
     return await search.search(title);
     /* const home = new HomeMobile(driver)

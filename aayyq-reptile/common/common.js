@@ -33,6 +33,9 @@ const sendSearch = async (driver, keyWords) => {
  * @return {*} driver driver
  */
 const sendSearchByMobile = async (driver, keyWords) => {
+  // 隐藏广告
+  const ad = await driver.findElement(By.tagName('a'));
+  await driver.executeScript('arguments[0].setAttribute("style", "display:none")', ad);
   await driver.findElement(By.className('aHeaderSearch')).click();
   await driver.wait(until.elementIsVisible(driver.findElement(By.className('searchPop'))), 3000);
   await driver.findElement(By.id('wd')).sendKeys(keyWords);
