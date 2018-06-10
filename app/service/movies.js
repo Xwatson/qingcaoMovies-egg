@@ -70,6 +70,7 @@ class MovieService extends Service {
         try {
           const searchMovie = new SearchMovie();
           aaqqyMovie = await searchMovie.search(createMovies[key].title, aaqqyMovie.proxy);
+          console.log('搜索完成1', searchMovie);
           createMovies[key].clarity = aaqqyMovie.movie.status;
           createMovies[key].area = aaqqyMovie.movie.area;
           createMovies[key].plot = aaqqyMovie.movie.plot;

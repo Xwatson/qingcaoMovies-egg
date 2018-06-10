@@ -13,12 +13,13 @@ class SearchMovie {
         this.proxyIndex = 0;
         this.proxys = await getProxy();
       }
-      return this.start(title, proxy);
+      return await this.start(title, proxy);
     } catch (e) {
       console.log('getProxy error：', typeof e, e);
     }
   }
   async start(title, proxy) {
+    let isContinue = false;
     if (this.proxys.length) {
       try {
         const moive = await aayyq.search(title, proxy ? proxy : this.proxys[this.proxyIndex]);
@@ -29,13 +30,17 @@ class SearchMovie {
       } catch (e) {
         if (e.toString().indexOf('TimeoutError') > -1 || e.code === responseCode.proxyUnavailable) {
           this.proxyIndex++;
-          return this.start(title);
+          isContinue = true;
         }
         console.log('ERR：', e);
+      }
+      if (isContinue) {
+        return await this.start(title, proxy);
       }
     } else {
       console.log('错误：未获取到代理。');
     }
+    return {};
   }
 }
 
