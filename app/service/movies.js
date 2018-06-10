@@ -1,5 +1,6 @@
 'use strict';
 const Service = require('egg').Service;
+const SearchMovie = require('../../util/searchMovie');
 
 class MovieService extends Service {
   constructor(ctx) {
@@ -26,6 +27,9 @@ class MovieService extends Service {
   async getMovieByAQId(id) {
     return await this.ctx.model.Movies.findOne({ where: { aayyq_id: id } });
   }
+  async getMovieByDoubanId(id) {
+    return await this.ctx.model.Movies.findOne({ where: { douban_id: id } });
+  }
   async batchCreate(movies = []) {
     let affectedRow = 0;
     for (let i = 0; i < movies.length; i++) {
@@ -42,6 +46,41 @@ class MovieService extends Service {
       }
     }
     return affectedRow;
+  }
+  async batchCreateTheaters(movies = []) {
+    // 查询本次数据库已有的电影
+    const dbIds = movies.map(m => m.id);
+    const existMovies = await this.ctx.model.Movies.findAll({
+      where: {
+        douban_id: dbIds,
+      },
+    });
+    console.log('已经存在的电影：', existMovies);
+    const createMovies = [];
+    if (existMovies) {
+      movies.forEach(m1 => {
+        if (!existMovies.find(m2 => m1.douban_id === m2.douban_id)) {
+          createMovies.push(m1);
+        }
+      });
+      console.log('需要插入的电影：', createMovies);
+      // 获取电影资源
+      let aaqqyMovie = {};
+      for (const key in createMovies) {
+        try {
+          const searchMovie = new SearchMovie();
+          aaqqyMovie = await searchMovie.search(createMovies[key].title, aaqqyMovie.proxy);
+          createMovies[key].clarity = aaqqyMovie.movie.status;
+          createMovies[key].area = aaqqyMovie.movie.area;
+          createMovies[key].plot = aaqqyMovie.movie.plot;
+          createMovies[key].player_url = aaqqyMovie.movie.player_url;
+          createMovies[key].update_time = aaqqyMovie.movie.update_time;
+        } catch (error) {
+          console.log(`电影《${createMovies[key].title}》未收录`, error);
+        }
+      }
+      console.log('搜索结束：', createMovies);
+    }
   }
 }
 
