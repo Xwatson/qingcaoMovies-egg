@@ -13,12 +13,12 @@ module.exports = app => {
     },
     douban_id: { // 豆瓣id
       type: INTEGER,
-      allowNull: false,
+      allowNull: true,
       unique: true,
     },
     aayyq_id: { // aayyq id
       type: INTEGER,
-      allowNull: false,
+      allowNull: true,
       unique: true,
     },
     douban_rating: DOUBLE, // 豆瓣评分
@@ -27,22 +27,21 @@ module.exports = app => {
     casts: STRING(30), // 主演（AA/BB)
     collect_count: INTEGER, // 看过人数
     original_title: STRING(30), // 原名
-    original_title: STRING(30), // 原名
     subtype: { // 所属分类
       type: ENUM,
       allowNull: false,
-      values: ['MOVIE', 'TV'] // 类目：电影，电视
+      values: [ 'MOVIE', 'TV' ], // 类目：电影，电视
     },
     directors: STRING(30), // 导演 （AA/BB）
     year: STRING(30), // 年份
     images_id: { // 图片外键 id
       type: INTEGER,
       field: 'images_id',
-      unique: true, 
+      unique: true,
       references: {
         model: 'images',
-        key: 'id'
-      }
+        key: 'id',
+      },
     },
     clarity: STRING(10), // 清晰度
     area: STRING(30), // 地区
@@ -52,10 +51,10 @@ module.exports = app => {
   },
   {
     indexes: [{
-        name: 'movies_images_id',
-        method: 'BTREE',
-        fields: ['images_id']
-    }]
+      name: 'movies_images_id',
+      method: 'BTREE',
+      fields: [ 'images_id' ],
+    }],
   });
 
   return Movies;
