@@ -34,8 +34,20 @@ const getDetail = async (driver, content, title) => {
   const iframeSrc = await iframes[1].getAttribute('src'); */
   await driver.switchTo().frame(1);
   await driver.sleep(1000);
-  await driver.wait(until.elementLocated(By.id('J_miPlayerWrapper')), 5000);
-  detail.player_url = await driver.findElement(By.id('J_miPlayerWrapper')).findElement(By.tagName('video')).getAttribute('src');
+  let isJPlayer = true;
+  try {
+    // 等待JPlayer
+    await driver.wait(until.elementLocated(By.id('J_miPlayerWrapper')), 3000);
+    detail.player_url = await driver.findElement(By.id('J_miPlayerWrapper')).findElement(By.tagName('video')).getAttribute('src');
+  } catch (error) {
+    isJPlayer = false;
+    console.log('未检测到JPlayer播放器，正在切换DPlayer');
+  }
+  if (!isJPlayer) {
+    // 等待DPlayer
+    await driver.wait(until.elementLocated(By.id('dplayer')), 3000);
+    detail.player_url = await driver.findElement(By.id('dplayer')).findElement(By.tagName('video')).getAttribute('src');
+  }
   /* if (iframeSrc.indexOf('mgtv') > -1) {
     await driver.wait(until.elementLocated(By.id('J_miPlayerWrapper')), 5000);
     detail.player_url = await driver.findElement(By.id('J_miPlayerWrapper')).findElement(By.tagName('video')).getAttribute('src');
