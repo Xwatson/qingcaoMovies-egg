@@ -55,7 +55,7 @@ class MovieService extends Service {
         douban_id: dbIds,
       },
     });
-    console.log('已经存在的电影：', existMovies);
+    // console.log('已经存在的电影：', existMovies);
     const createMovies = [];
     if (existMovies) {
       movies.forEach(m1 => {
@@ -63,14 +63,14 @@ class MovieService extends Service {
           createMovies.push(m1);
         }
       });
-      console.log('需要插入的电影：', createMovies);
+      // console.log('需要插入的电影：', createMovies);
       // 获取电影资源
       let aaqqyMovie = {};
       for (const key in createMovies) {
         try {
           const searchMovie = new SearchMovie();
           aaqqyMovie = await searchMovie.search(createMovies[key].title, aaqqyMovie.proxy);
-          console.log('搜索完成1', searchMovie);
+          console.log('搜索完成' + key, aaqqyMovie);
           createMovies[key].clarity = aaqqyMovie.movie.status;
           createMovies[key].area = aaqqyMovie.movie.area;
           createMovies[key].plot = aaqqyMovie.movie.plot;
@@ -80,7 +80,7 @@ class MovieService extends Service {
           console.log(`电影《${createMovies[key].title}》未收录`, error);
         }
       }
-      console.log('搜索结束：', createMovies);
+      // console.log('搜索结束：', createMovies);
     }
   }
 }
