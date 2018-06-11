@@ -1,13 +1,11 @@
 'use strict';
 
 class InTheaters {
-  constructor() {
-  }
   async start() {
-    const res = await this.ctx.curl('https://api.douban.com/v2/movie/in_theaters?city=北京&count=50',{
+    const res = await this.ctx.curl('https://api.douban.com/v2/movie/in_theaters?city=北京&count=50', {
       dataType: 'json',
     });
-    const movies = []
+    const movies = [];
     if (res && res.data.subjects) {
       res.data.subjects.forEach(item => {
         // 过滤0分影片
@@ -23,8 +21,8 @@ class InTheaters {
             subtype: item.subtype === 'movie' ? 'MOVIE' : 'TV',
             directors: (item.directors || []).map(d => d.name).join('/'),
             year: item.year,
-            images: item.images
-          })
+            images: item.images,
+          });
         }
       });
     }
