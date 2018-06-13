@@ -11,7 +11,7 @@ class InTheaters {
         // 过滤0分影片
         if (item.rating.average > 0) {
           movies.push({
-            douban_id: item.id,
+            douban_id: parseInt(item.id),
             douban_rating: item.rating.average,
             genres: (item.genres || []).join('/'),
             title: item.title,
