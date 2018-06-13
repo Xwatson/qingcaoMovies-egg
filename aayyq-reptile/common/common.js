@@ -46,6 +46,3 @@ exports.HOST = 'http://c.aaccy.com';
 exports.switchFrame = switchFrame;
 exports.sendSearch = sendSearch;
 exports.sendSearchByMobile = sendSearchByMobile;
-exports.responseCode = {
-  proxyUnavailable: 1001, // 代理不可用
-};

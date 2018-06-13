@@ -2,14 +2,16 @@
 
 const { Builder, until, By } = require('selenium-webdriver');
 const { Options } = require('selenium-webdriver/chrome');
-const { HOST, responseCode } = require('./common/common');
+const { HOST } = require('./common/common');
+const responseCode = require('../util/responseCode');
+const QCError = require('../util/error');
 const SearchMobile = require('./search/searchMobile');
 const HomeMobile = require('./home/homeMobile');
 const seleniumProxy = require('selenium-webdriver/proxy');
 
 const search = async (title = '', proxy) => {
   if (!title) {
-    throw new Error('错误：请传入title');
+    throw new QCError(responseCode.error, '错误：请传入title');
   }
   let driver = null;
   try {
@@ -27,8 +29,7 @@ const search = async (title = '', proxy) => {
     await driver.wait(until.elementLocated(By.className('aHeaderSearch')), 3000);
     if (!/YY4480影院官网/.test(await driver.getTitle())) {
       await driver.quit();
-      console.log(`代理：${proxy.ip}:${proxy.port}-${proxy.city} 不可用.`);
-      throw new Error({ code: responseCode.proxyUnavailable });
+      throw new QCError(responseCode.proxyUnavailable, `代理：${proxy.ip}:${proxy.port}-${proxy.city} 不可用.`);
     }
     console.log('正在使用代理：', `${proxy.ip}:${proxy.port}-${proxy.city}`);
     const search = new SearchMobile(driver);
@@ -55,8 +56,7 @@ const newMovies = async (proxy = {}) => {
     await driver.get(HOST);
     if (!/YY4480影院官网/.test(await driver.getTitle())) {
       await driver.quit();
-      console.log(`代理：${proxy.ip}:${proxy.port}-${proxy.city} 不可用.`);
-      throw new Error({ code: responseCode.proxyUnavailable });
+      throw new QCError(responseCode.proxyUnavailable, `代理：${proxy.ip}:${proxy.port}-${proxy.city} 不可用.`);
     }
     console.log('正在使用代理：', `${proxy.ip}:${proxy.port}-${proxy.city}`);
     const home = new HomeMobile(driver);

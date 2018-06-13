@@ -1,6 +1,7 @@
 'use strict';
 const aayyq = require('../aayyq-reptile');
-const { responseCode } = require('../aayyq-reptile/common/common');
+const responseCode = require('../util/responseCode');
+const QCError = require('../util/error');
 // const getProxy = require('../aayyq-reptile/common/getProxy');
 const { getZhiMaIp } = require('./proxy');
 
@@ -25,7 +26,7 @@ class SearchMovie {
       }
       return await this.start(title, proxy);
     } catch (e) {
-      console.log('getProxy error：', typeof e, e);
+      throw new QCError(responseCode.proxyError, e);
     }
   }
   async start(title, proxy) {
@@ -35,7 +36,7 @@ class SearchMovie {
       try {
         movie = await aayyq.search(title, proxy ? proxy : this.proxys[this.proxyIndex]);
       } catch (e) {
-        if (e.toString().indexOf('TimeoutError') > -1 || e.code === responseCode.proxyUnavailable) {
+        if (e.message.indexOf('TimeoutError') > -1 || e.code === responseCode.proxyUnavailable) {
           this.proxyIndex++;
           isContinue = true;
         }

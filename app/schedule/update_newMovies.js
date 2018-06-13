@@ -2,7 +2,7 @@
 
 const Subscription = require('egg').Subscription;
 const aayyq = require('../../aayyq-reptile');
-const { responseCode } = require('../../aayyq-reptile/common/common');
+const responseCode = require('../../util/responseCode');
 const getProxy = require('../../aayyq-reptile/common/getProxy');
 
 class UpdateCache extends Subscription {

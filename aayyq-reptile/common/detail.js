@@ -45,8 +45,12 @@ const getDetail = async (driver, content, title) => {
   }
   if (!isJPlayer) {
     // 等待DPlayer
-    await driver.wait(until.elementLocated(By.id('dplayer')), 3000);
-    detail.player_url = await driver.findElement(By.id('dplayer')).findElement(By.tagName('video')).getAttribute('src');
+    try {
+      await driver.wait(until.elementLocated(By.id('dplayer')), 3000);
+      detail.player_url = await driver.findElement(By.id('dplayer')).findElement(By.tagName('video')).getAttribute('src');
+    } catch (error) {
+      throw new Error(`搜索电影《${title}》未收录。`);
+    }
   }
   /* if (iframeSrc.indexOf('mgtv') > -1) {
     await driver.wait(until.elementLocated(By.id('J_miPlayerWrapper')), 5000);
