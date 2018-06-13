@@ -17,9 +17,9 @@ class SearchMovie {
       } else {
         // 判断是否过期
         if (Date.now >= new Date(proxy.expire_time).getTime()) {
-          console.log(`代理：${proxy.ip} ${proxy.city}已过期，正在重新获取代理...`)
+          console.log(`代理：${proxy.ip} ${proxy.city}已过期，正在重新获取代理...`);
           this.proxyIndex = 0;
-          proxy = null
+          proxy = null;
           this.proxys = await getZhiMaIp();
         }
       }
