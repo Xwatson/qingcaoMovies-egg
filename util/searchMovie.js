@@ -13,7 +13,15 @@ class SearchMovie {
     try {
       if (!proxy) {
         this.proxyIndex = 0;
-        this.proxys = await getZhiMaIp(this);
+        this.proxys = await getZhiMaIp();
+      } else {
+        // 判断是否过期
+        if (Date.now >= new Date(proxy.expire_time).getTime()) {
+          console.log(`代理：${proxy.ip} ${proxy.city}已过期，正在重新获取代理...`)
+          this.proxyIndex = 0;
+          proxy = null
+          this.proxys = await getZhiMaIp();
+        }
       }
       return await this.start(title, proxy);
     } catch (e) {
@@ -23,7 +31,7 @@ class SearchMovie {
   async start(title, proxy) {
     let isContinue = false;
     let movie = {};
-    if (this.proxys.length || proxy) {
+    if ((this.proxys.length && this.proxys[this.proxyIndex]) || proxy) {
       try {
         movie = await aayyq.search(title, proxy ? proxy : this.proxys[this.proxyIndex]);
       } catch (e) {
@@ -37,7 +45,10 @@ class SearchMovie {
         return await this.start(title, proxy);
       }
     } else {
-      console.log('错误：未获取到代理。');
+      console.log('没有可用代理，正在重新获取代理...');
+      this.proxyIndex = 0;
+      this.proxys = await getZhiMaIp();
+      return await this.start(title, null);
     }
     return {
       proxy: proxy ? proxy : this.proxys[this.proxyIndex],
