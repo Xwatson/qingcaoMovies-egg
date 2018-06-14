@@ -22,17 +22,17 @@ module.exports = app => {
       unique: true,
     },
     douban_rating: DOUBLE, // 豆瓣评分
-    genres: STRING(30), // 流派，类型（动作/冒险）
-    title: STRING(30), // 名称
-    casts: STRING(30), // 主演（AA/BB)
+    genres: STRING(255), // 流派，类型（动作/冒险）
+    title: STRING(255), // 名称
+    casts: STRING(255), // 主演（AA/BB)
     collect_count: INTEGER, // 看过人数
-    original_title: STRING(30), // 原名
+    original_title: STRING(255), // 原名
     subtype: { // 所属分类
       type: ENUM,
       allowNull: false,
       values: [ 'MOVIE', 'TV' ], // 类目：电影，电视
     },
-    directors: STRING(30), // 导演 （AA/BB）
+    directors: STRING(255), // 导演 （AA/BB）
     year: STRING(30), // 年份
     images_id: { // 图片外键 id
       type: INTEGER,

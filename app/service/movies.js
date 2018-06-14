@@ -70,29 +70,43 @@ class MovieService extends Service {
       let aaqqyMovie = {};
       const searchMovie = new SearchMovie();
       for (const key in createMovies) {
+        const c_Movie = createMovies[key];
         try {
-          aaqqyMovie = await searchMovie.search(createMovies[key].title, aaqqyMovie.proxy);
+          aaqqyMovie = await searchMovie.search(c_Movie.title, aaqqyMovie.proxy);
         } catch (error) {
           if (error.code === responseCode.proxyError) {
             console.log('获取代理错误: ', error.message);
             return;
           }
-          console.log(`电影《${createMovies[key].title}》未收录`, error);
+          console.log(`电影《${c_Movie.title}》未收录`, error);
         }
         if (aaqqyMovie.movie) {
-          createMovies[key].aayyq_id = parseInt(aaqqyMovie.movie.aayyq_id);
-          createMovies[key].clarity = aaqqyMovie.movie.status;
-          createMovies[key].area = aaqqyMovie.movie.area;
-          createMovies[key].plot = aaqqyMovie.movie.plot;
-          createMovies[key].player_url = aaqqyMovie.movie.player_url;
-          createMovies[key].update_time = aaqqyMovie.movie.update_time;
+          if (aaqqyMovie.movie.aayyq_id) {
+            c_Movie.aayyq_id = parseInt(aaqqyMovie.movie.aayyq_id);
+          }
+          c_Movie.clarity = aaqqyMovie.movie.status;
+          c_Movie.area = aaqqyMovie.movie.area;
+          c_Movie.plot = aaqqyMovie.movie.plot;
+          c_Movie.player_url = aaqqyMovie.movie.player_url;
+          c_Movie.update_time = aaqqyMovie.movie.update_time;
         }
-        const _create = await this.create(createMovies[key]);
-        if (_create) {
-          console.log(`插入电影《${_create.title}》成功`);
+        // 插入图片
+        const _createImage = await this.ctx.model.Images.create({
+          small: (c_Movie.images || {}).small,
+          large: (c_Movie.images || {}).large,
+          medium: (c_Movie.images || {}).medium,
+        });
+        if (_createImage) {
+          c_Movie.images_id = _createImage.id;
+          const _create = await this.create(c_Movie);
+          if (_create) {
+            console.log(`插入电影《${_create.title}》成功`);
+          }
+        } else {
+          console.log(`电影《${c_Movie.title}》图片插入失败`);
         }
       }
-      console.log('搜索结束');
+      console.log('搜索结束' + (!createMovies.length ? '，数据库已包含最新上映电影。' : ''));
     }
   }
 }
