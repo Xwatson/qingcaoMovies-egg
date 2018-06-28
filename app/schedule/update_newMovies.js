@@ -29,8 +29,35 @@ class UpdateCache extends Subscription {
     if (this.proxys.length) {
       try {
         const movies = await aayyq.newMovies(this.proxys[this.proxyIndex]);
-        console.log('获取到movies：', movies);
-        this.ctx.service.movies.batchCreateAaqqyNewMovies(movies);
+        console.log('获取到线路：', movies);
+        return
+        for (const m1 in movies) {
+          let detail = {}, lines = [], lineName = ''
+          for (const m2 in movies[m1].lines) {
+            lineName = movies[m1].lines[m2].lineName
+            for (const m3 in movies[m1].lines[m2].lines) {
+              const proxy = this.proxys[this.proxyIndex]
+              // 判断是否过期
+              if (Date.now >= new Date(proxy.expire_time).getTime()) {
+                console.log(`代理：${proxy.ip} ${proxy.city}已过期，正在重新获取代理...`);
+                this.proxyIndex = 0;
+                proxy = null;
+                this.proxys = await getZhiMaIp();
+              }
+              detail = await aayyq.goToDetail(this.proxys[this.proxyIndex], movies[m1].lines[m2].lines[m3].linkUrl, movies[key].title)
+              lines.push({
+                name: movies[m1].lines[m2].lines[m3].name,
+                playUrl: detail.player_url
+              })
+            }
+          }
+          movies[m1].detail = {
+            lines,
+            ...detail
+          }
+        }
+        console.log('获取到所有影片', movies)
+        // this.ctx.service.movies.batchCreateAaqqyNewMovies(movies);
       } catch (e) {
         console.log('ERR：', typeof e, e);
         if (e.TimeoutError === 'timeout' || e.code === responseCode.proxyUnavailable) {

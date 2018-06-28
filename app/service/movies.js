@@ -136,7 +136,22 @@ class MovieService extends Service {
           console.log(`电影《${c_Movie.title}》图片插入失败`);
           return;
         }
-        const _create = await this.create(c_Movie);
+        
+        const _create = await this.create({
+          aayyq_id: c_Movie.aayyq_id,
+          genres: c_Movie.type,
+          title: c_Movie.title,
+          casts: c_Movie.starring,
+          subtype: 'MOVIE',
+          directors: c_Movie.director,
+          year: c_Movie.update_time,
+          images_id: c_Movie.images_id,
+          clarity: c_Movie.status,
+          area: c_Movie.area,
+          plot: c_Movie.plot,
+          player_url: c_Movie.player_url,
+          update_time: c_Movie.update_time,
+        });
         if (_create) {
           console.log(`插入电影《${_create.title}》成功`);
         }

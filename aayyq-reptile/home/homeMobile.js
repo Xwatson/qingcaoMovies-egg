@@ -1,6 +1,7 @@
 'use strict';
 
 const getDetail = require('../common/detail');
+const getSource = require('../common/getSource');
 const { By } = require('selenium-webdriver');
 
 class homeMobile {
@@ -27,7 +28,10 @@ class homeMobile {
       if (this.newMovieQueue[key].status === '高清') {
         await this.driver.get(this.newMovieQueue[key].url);
         details.push(
-          await getDetail(this.driver, await this.driver.findElement(By.tagName('body')), this.newMovieQueue[key].title)
+          {
+            ...this.newMovieQueue[key],
+            lines: await getSource(this.driver, await this.driver.findElement(By.tagName('body')), this.newMovieQueue[key].title)
+          }
         );
       }
     }
