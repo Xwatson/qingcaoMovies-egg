@@ -3,7 +3,8 @@
 const Subscription = require('egg').Subscription;
 const aayyq = require('../../aayyq-reptile');
 const responseCode = require('../../util/responseCode');
-const getProxy = require('../../aayyq-reptile/common/getProxy');
+// const getProxy = require('../../aayyq-reptile/common/getProxy');
+const { getZhiMaIp } = require('../../util/proxy');
 
 class UpdateCache extends Subscription {
   // 通过 schedule 属性来设置定时任务的执行间隔等配置
@@ -18,28 +19,10 @@ class UpdateCache extends Subscription {
   async subscribe() {
     try {
       this.proxyIndex = 0;
-      this.proxys = await getProxy();
-      this.startSearch('捉妖记2');
+      this.proxys = await getZhiMaIp();
+      this.startGetNewMovies();
     } catch (e) {
       console.log('getProxy error：', typeof e, e);
-    }
-  }
-  async startSearch(title) {
-    if (this.proxys.length) {
-      try {
-        const movie = await aayyq.search(title, this.proxys[this.proxyIndex]);
-        const _create = this.ctx.model.Movies.create(movie);
-        console.log('获取到movies：', movie);
-        console.log('创建：', _create);
-      } catch (e) {
-        console.log('ERR：', e);
-        if (e.toString().indexOf('TimeoutError') > -1 || e.code === responseCode.proxyUnavailable) {
-          this.proxyIndex++;
-          this.startSearch('捉妖记2');
-        }
-      }
-    } else {
-      console.log('错误：未获取到代理。');
     }
   }
   async startGetNewMovies() {
@@ -47,10 +30,12 @@ class UpdateCache extends Subscription {
       try {
         const movies = await aayyq.newMovies(this.proxys[this.proxyIndex]);
         console.log('获取到movies：', movies);
+        this.ctx.service.movies.batchCreateAaqqyNewMovies(movies);
       } catch (e) {
         console.log('ERR：', typeof e, e);
         if (e.TimeoutError === 'timeout' || e.code === responseCode.proxyUnavailable) {
-          this.proxyIndex++;
+          // this.proxyIndex++;
+          this.proxys = await getZhiMaIp();
           this.startGetNewMovies();
         }
       }
