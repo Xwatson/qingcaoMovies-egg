@@ -109,6 +109,41 @@ class MovieService extends Service {
       console.log('搜索结束' + (!createMovies.length ? '，数据库已包含最新上映电影。' : ''));
     }
   }
+  async batchCreateAaqqyNewMovies(movies = []) {
+    // 查询本次数据库已有的电影
+    const dbIds = movies.map(m => m.aayyq_id);
+    const existMovies = await this.ctx.model.Movies.findAll({
+      attributes: [ 'aayyq_id' ],
+      where: {
+        aayyq_id: dbIds,
+      },
+    });
+    for (const key in movies) {
+      const c_Movie = movies[key];
+      if (existMovies.indexOf(c_Movie.aayyq_id) > -1) {
+        const _update = await this.update(c_Movie);
+        if (_update) {
+          console.log(`修改电影《${_update.title}》成功`);
+        }
+      } else {
+        // 插入图片
+        const _createImage = await this.ctx.model.Images.create({
+          large: (c_Movie.images || {}).large,
+        });
+        if (_createImage) {
+          c_Movie.images_id = _createImage.id;
+        } else {
+          console.log(`电影《${c_Movie.title}》图片插入失败`);
+          return;
+        }
+        const _create = await this.create(c_Movie);
+        if (_create) {
+          console.log(`插入电影《${_create.title}》成功`);
+        }
+      }
+    }
+    console.log('更新aayyq最新电影结束');
+  }
 }
 
 module.exports = MovieService;
