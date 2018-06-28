@@ -36,14 +36,8 @@ class UpdateCache extends Subscription {
           for (const m2 in movies[m1].lines) {
             lineName = movies[m1].lines[m2].lineName
             for (const m3 in movies[m1].lines[m2].lines) {
-              const proxy = this.proxys[this.proxyIndex]
               // 判断是否过期
-              if (Date.now >= new Date(proxy.expire_time).getTime()) {
-                console.log(`代理：${proxy.ip} ${proxy.city}已过期，正在重新获取代理...`);
-                this.proxyIndex = 0;
-                proxy = null;
-                this.proxys = await getZhiMaIp();
-              }
+              await this.verifyProxyExpireTime(this.proxys[this.proxyIndex])
               detail = await aayyq.goToDetail(this.proxys[this.proxyIndex], movies[m1].lines[m2].lines[m3].linkUrl, movies[key].title)
               lines.push({
                 name: movies[m1].lines[m2].lines[m3].name,
@@ -68,6 +62,13 @@ class UpdateCache extends Subscription {
       }
     } else {
       console.log('错误：未获取到代理。');
+    }
+  }
+  async verifyProxyExpireTime (proxy) {
+    if (Date.now >= new Date(proxy.expire_time).getTime()) {
+      console.log(`代理：${proxy.ip} ${proxy.city}已过期，正在重新获取代理...`);
+      this.proxyIndex = 0;
+      this.proxys = await getZhiMaIp();
     }
   }
 }
