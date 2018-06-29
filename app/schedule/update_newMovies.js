@@ -52,7 +52,6 @@ class UpdateCache extends Subscription {
   }
   async getDetail() {
     for (const m1 in this.movies) {
-      if (m1 > 0) break;
       if (this.movies[m1].detail.lines) {
         continue;
       }
