@@ -28,34 +28,16 @@ class UpdateCache extends Subscription {
   async startGetNewMovies() {
     if (this.proxys.length) {
       try {
-        const movies = await aayyq.newMovies(this.proxys[this.proxyIndex]);
-        console.log('获取到线路：', movies);
-        for (const m1 in movies) {
-          let detail = {},
-            lineName = '';
-          const re_lines = [],
-            lines = [];
-          for (const m2 in movies[m1].lines) {
-            lineName = movies[m1].lines[m2].lineName;
-            for (const m3 in movies[m1].lines[m2].lines) {
-              // 判断是否过期
-              await this.verifyProxyExpireTime(this.proxys[this.proxyIndex]);
-              detail = await aayyq.goToDetail(this.proxys[this.proxyIndex], movies[m1].lines[m2].lines[m3].linkUrl, movies[m1].title);
-              re_lines.push({
-                name: movies[m1].lines[m2].lines[m3].name,
-                playUrl: detail.player_url,
-              });
-            }
-            lines.push({
-              lineName,
-              lines: re_lines,
-            });
+        this.movies = await aayyq.newMovies(this.proxys[this.proxyIndex]);
+        try {
+          await this.getDetail();
+        } catch (e) {
+          if (e.message.indexOf('TimeoutError') > -1 || e.code === responseCode.proxyUnavailable) {
+            this.proxys = await getZhiMaIp();
+            await this.getDetail();
           }
-          movies[m1].detail = detail;
-          movies[m1].detail.lines = lines;
         }
-        console.log('获取到所有影片', movies);
-        // this.ctx.service.movies.batchCreateAaqqyNewMovies(movies);
+        this.ctx.service.movies.batchCreateAaqqyNewMovies(this.movies);
       } catch (e) {
         console.log('ERR：', typeof e, e);
         if (e.TimeoutError === 'timeout' || e.code === responseCode.proxyUnavailable) {
@@ -66,6 +48,34 @@ class UpdateCache extends Subscription {
       }
     } else {
       console.log('错误：未获取到代理。');
+    }
+  }
+  async getDetail() {
+    for (const m1 in this.movies) {
+      if (m1 > 0) break;
+      if (this.movies[m1].detail.lines) {
+        continue;
+      }
+      let lineName = '';
+      const lines = [];
+      for (const m2 in this.movies[m1].lines) {
+        const re_lines = [];
+        lineName = this.movies[m1].lines[m2].lineName;
+        for (const m3 in this.movies[m1].lines[m2].lines) {
+          // 判断是否过期
+          await this.verifyProxyExpireTime(this.proxys[this.proxyIndex]);
+          const playUrl = await aayyq.goToDetail(this.proxys[this.proxyIndex], this.movies[m1].lines[m2].lines[m3].linkUrl, this.movies[m1].title);
+          re_lines.push({
+            name: this.movies[m1].lines[m2].lines[m3].name,
+            playUrl: playUrl.player_url,
+          });
+        }
+        lines.push({
+          lineName,
+          lines: re_lines,
+        });
+      }
+      this.movies[m1].detail.playLines = lines;
     }
   }
   async verifyProxyExpireTime(proxy) {

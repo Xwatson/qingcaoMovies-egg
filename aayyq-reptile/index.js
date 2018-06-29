@@ -78,14 +78,20 @@ const goToDetail = async (proxy = {}, host, title) => {
         bypass: null,
       }))
       .build();
-    // await driver.manage().setTimeouts({ pageLoad: 5000 });
+    await driver.sleep(1000);
     await driver.get(host);
-    if (!/YY4480影院官网/.test(await driver.getTitle())) {
+    const reg = new RegExp(title);
+    if (!reg.test(await driver.getTitle())) {
       await driver.quit();
       throw new QCError(responseCode.proxyUnavailable, `代理：${proxy.ip}:${proxy.port}-${proxy.city} 不可用.`);
     }
     console.log('正在使用代理：', `${proxy.ip}:${proxy.port}-${proxy.city}`);
-    return await getDetail(driver, await driver.findElement(By.tagName('body')), title);
+    return await getDetail(driver, await driver.findElement(By.tagName('body')), title, true);
+  } catch (e) {
+    if (e.toString().indexOf('Alert') > -1) {
+      console.log('影片播放地址错误', e);
+      return {};
+    }
   } finally {
     await driver && driver.quit();
   }

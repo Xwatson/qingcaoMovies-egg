@@ -119,7 +119,7 @@ class MovieService extends Service {
       },
     });
     for (const key in movies) {
-      const c_Movie = movies[key];
+      const c_Movie = movies[key].detail;
       if (existMovies.indexOf(c_Movie.aayyq_id) > -1) {
         const _update = await this.update(c_Movie);
         if (_update) {
@@ -136,7 +136,6 @@ class MovieService extends Service {
           console.log(`电影《${c_Movie.title}》图片插入失败`);
           return;
         }
-        
         const _create = await this.create({
           aayyq_id: c_Movie.aayyq_id,
           genres: c_Movie.type,
@@ -151,6 +150,7 @@ class MovieService extends Service {
           plot: c_Movie.plot,
           player_url: c_Movie.player_url,
           update_time: c_Movie.update_time,
+          play_lines: c_Movie.playLines,
         });
         if (_create) {
           console.log(`插入电影《${_create.title}》成功`);

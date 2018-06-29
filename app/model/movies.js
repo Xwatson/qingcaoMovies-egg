@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = app => {
-  const { STRING, INTEGER, DATE, DOUBLE, ENUM } = app.Sequelize;
+  const { STRING, INTEGER, DATE, DOUBLE, ENUM, TEXT } = app.Sequelize;
 
   const Movies = app.model.define('movies', {
     id: {
@@ -48,6 +48,7 @@ module.exports = app => {
     plot: STRING(500), // 剧情
     player_url: STRING(2000), // 播放地址
     update_time: DATE, // 更新日期
+    play_lines: TEXT, // 播放路线json
   },
   {
     indexes: [{

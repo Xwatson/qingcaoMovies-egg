@@ -1,6 +1,6 @@
 'use strict';
 
-const getDetail = require('../common/detail');
+// const getDetail = require('../common/detail');
 const getSource = require('../common/getSource');
 const { By } = require('selenium-webdriver');
 
@@ -25,14 +25,15 @@ class homeMobile {
   async goToDetail() {
     const details = [];
     for (const key in this.newMovieQueue) {
+      if (key > 0) break;
       if (this.newMovieQueue[key].status === '高清') {
+        await this.driver.sleep(800);
         await this.driver.get(this.newMovieQueue[key].url);
-        details.push(
-          {
-            ...this.newMovieQueue[key],
-            lines: await getSource(this.driver, await this.driver.findElement(By.tagName('body')), this.newMovieQueue[key].title)
-          }
-        );
+        const _d = this.newMovieQueue[key];
+        const _s = await getSource(this.driver, await this.driver.findElement(By.tagName('body')), this.newMovieQueue[key].title);
+        _d.lines = _s.sources;
+        _d.detail = _s.detail;
+        details.push(_d);
       }
     }
     return details;
