@@ -85,7 +85,7 @@ const goToDetail = async (proxy = {}, host, title) => {
       throw new QCError(responseCode.proxyUnavailable, `代理：${proxy.ip}:${proxy.port}-${proxy.city} 不可用.`);
     }
     console.log('正在使用代理：', `${proxy.ip}:${proxy.port}-${proxy.city}`);
-    return await getDetail(driver, await driver.findElement(By.tagName('body')), title)
+    return await getDetail(driver, await driver.findElement(By.tagName('body')), title);
   } finally {
     await driver && driver.quit();
   }
