@@ -121,7 +121,11 @@ class MovieService extends Service {
     for (const key in movies) {
       const c_Movie = movies[key].detail;
       if (existMovies.indexOf(c_Movie.aayyq_id) > -1) {
-        const _update = await this.update(c_Movie);
+        const _update = await this.ctx.model.Movies.update({
+          play_lines: c_Movie.playLines,
+        }, {
+          where: { aayyq_id: c_Movie.aayyq_id },
+        });
         if (_update) {
           console.log(`修改电影《${_update.title}》成功`);
         }
