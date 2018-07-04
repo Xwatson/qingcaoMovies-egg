@@ -8,7 +8,9 @@ const getSource = async (driver, content, title) => {
   // 隐藏广告
   await driver.sleep(1000);
   const ad = await content.findElement(By.tagName('a'));
-  await driver.executeScript('arguments[0].setAttribute("style", "display:none")', ad);
+  if (ad) {
+	await driver.executeScript('arguments[0].setAttribute("style", "display:none")', ad);
+  }
   await driver.wait(until.titleMatches(new RegExp(title), 3000));
   const detail = await getDetailAttr(driver, content);
   const sourceBody = await content.findElement(By.id('con_vod_1'));

@@ -61,9 +61,14 @@ const getDetailAttr = async (driver, content = {}) => {
   detail.image_url = await movieBody.findElement(By.className('vod-l')).findElement(By.tagName('img')).getAttribute('data-original');
   const playTabs = await content.findElement(By.className('vod-play-tab')).findElements(By.tagName('li'));
   await playTabs[1].findElement(By.tagName('span')).click();
-  await driver.wait(until.elementIsVisible(content.findElement(By.id('con_vod_2'))), 3000);
-  const plot = await content.findElement(By.id('con_vod_2')).getText();
-  detail.plot = plot.replace(/\n|/g, '');
+  try {
+	await driver.wait(until.elementIsVisible(content.findElement(By.id('con_vod_2'))), 3000);
+	const plot = await content.findElement(By.id('con_vod_2')).getText();
+	detail.plot = plot.replace(/\n|/g, '');
+  } catch(e) {
+	console.log('未获取到情节简介。');
+  }
+
   return detail;
 };
 exports.HOST = 'http://c.aaccy.com';
