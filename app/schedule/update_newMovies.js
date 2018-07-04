@@ -35,8 +35,12 @@ class UpdateCache extends Subscription {
           if (e.message.indexOf('TimeoutError') > -1 || e.code === responseCode.proxyUnavailable) {
             this.proxys = await getZhiMaIp();
             await this.getDetail();
+          } else if (e.message.indexOf('valid session ID') > -1) {
+            console.log('驱动遇到错误：', e.message);
+            return;
           }
         }
+        console.log('开始更新电影', this.movies);
         this.ctx.service.movies.batchCreateAaqqyNewMovies(this.movies);
       } catch (e) {
         console.log('ERR：', typeof e, e);

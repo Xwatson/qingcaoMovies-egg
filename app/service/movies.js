@@ -111,28 +111,29 @@ class MovieService extends Service {
   }
   async batchCreateAaqqyNewMovies(movies = []) {
     // 查询本次数据库已有的电影
-    const dbIds = movies.map(m => m.aayyq_id);
-    const existMovies = await this.ctx.model.Movies.findAll({
+    const dbIds = movies.map(m => m.detail.aayyq_id);
+    let existMovies = await this.ctx.model.Movies.findAll({
       attributes: [ 'aayyq_id' ],
       where: {
-        aayyq_id: dbIds,
+        aayyq_id: { $in: dbIds },
       },
     });
+    existMovies = existMovies.map(e => e.aayyq_id.toString());
     for (const key in movies) {
       const c_Movie = movies[key].detail;
       if (existMovies.indexOf(c_Movie.aayyq_id) > -1) {
         const _update = await this.ctx.model.Movies.update({
-          play_lines: c_Movie.playLines,
+          play_lines: JSON.stringify(c_Movie.playLines),
         }, {
           where: { aayyq_id: c_Movie.aayyq_id },
         });
         if (_update) {
-          console.log(`修改电影《${_update.title}》成功`);
+          console.log(`修改电影《${c_Movie.title}》成功`);
         }
       } else {
         // 插入图片
         const _createImage = await this.ctx.model.Images.create({
-          large: (c_Movie.images || {}).large,
+          large: c_Movie.image_url,
         });
         if (_createImage) {
           c_Movie.images_id = _createImage.id;
@@ -154,7 +155,7 @@ class MovieService extends Service {
           plot: c_Movie.plot,
           player_url: c_Movie.player_url,
           update_time: c_Movie.update_time,
-          play_lines: c_Movie.playLines,
+          play_lines: JSON.stringify(c_Movie.playLines),
         });
         if (_create) {
           console.log(`插入电影《${_create.title}》成功`);

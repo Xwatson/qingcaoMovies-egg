@@ -12,7 +12,9 @@ class homeMobile {
   async getNewMovie() {
     // 隐藏广告
     const ad = await this.driver.findElement(By.tagName('body')).findElement(By.tagName('a'));
-    await this.driver.executeScript('arguments[0].setAttribute("style", "display:none")', ad);
+    if (ad) {
+      await this.driver.executeScript('arguments[0].setAttribute("style", "display:none")', ad);
+    }
     const mains = await this.driver.findElements(By.className('main'));
     const lists = await mains[2].findElements(By.tagName('li'));
     for (const key in lists) {

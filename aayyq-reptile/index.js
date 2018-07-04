@@ -19,7 +19,8 @@ const search = async (title = '', proxy) => {
     driver = await new Builder()
       .forBrowser('chrome')
       .setChromeOptions(
-        new Options().setMobileEmulation({ deviceName: 'Nexus 5X' }))
+        new Options().setMobileEmulation({ deviceName: 'Nexus 5X' })
+      )
       .setProxy(seleniumProxy.manual({
         http: `${proxy.ip}:${proxy.port}`,
         bypass: null,
@@ -44,10 +45,11 @@ const search = async (title = '', proxy) => {
 const newMovies = async (proxy = {}) => {
   let driver = null;
   try {
+    const chromeOptions = new Options();
+    chromeOptions.setMobileEmulation({ deviceName: 'Nexus 5X' });
     driver = await new Builder()
       .forBrowser('chrome')
-      .setChromeOptions(
-        new Options().setMobileEmulation({ deviceName: 'Nexus 5X' }))
+      .setChromeOptions(chromeOptions)
       .setProxy(seleniumProxy.manual({
         http: `${proxy.ip}:${proxy.port}`,
         bypass: null,

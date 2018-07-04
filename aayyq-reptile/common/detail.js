@@ -43,7 +43,7 @@ const getDetail = async (driver, content, title, isPlayer) => {
       detail.player_url = await driver.findElement(By.id('appfu')).findElement(By.tagName('video')).getAttribute('src');
       return detail;
     } catch (error) {
-      throw new Error(`搜索电影《${title}》未收录。`);
+      console.log(`搜索电影《${title}》未收录。`);
     }
     /* if (iframeSrc.indexOf('mgtv') > -1) {
       await driver.wait(until.elementLocated(By.id('J_miPlayerWrapper')), 5000);
