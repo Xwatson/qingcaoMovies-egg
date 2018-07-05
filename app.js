@@ -9,7 +9,9 @@ module.exports = app => {
         await app.model.sync(); // { force: true }
       });
     }
-    await app.runSchedule('update_newMovies');
-    // await app.runSchedule('update_douBan'); // 启动项目立即执行一次
+    if (app.config.env === 'prod') {
+      await app.runSchedule('update_newMovies');
+      // await app.runSchedule('update_douBan'); // 启动项目立即执行一次
+    }
   });
 };
