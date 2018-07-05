@@ -1,4 +1,5 @@
 'use strict';
+const path = require('path');
 
 module.exports = appInfo => {
   const config = exports = {};
@@ -11,6 +12,11 @@ module.exports = appInfo => {
   // 只对 /api 前缀的 url 路径生效
   config.errorHandler = {
     match: '/api',
+  };
+  exports.view = {
+    mapping: {
+      '.ejs': 'ejs',
+    }
   };
   return config;
 };
