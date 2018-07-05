@@ -4,6 +4,7 @@
   "description": "movies qingcao",
   "private": true,
   "dependencies": {
+    "@types/request": "^2.47.1",
     "cheerio": "^1.0.0-rc.2",
     "egg": "^2.8.1",
     "egg-scripts": "^2.5.0",
