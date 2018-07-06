@@ -1,0 +1,17 @@
+
+body{
+    background-color: #333;
+    color: #fff;
+}
+a:link {color: #fff}		/* 未访问的链接 */
+a:visited {color: #fff}	/* 已访问的链接 */
+a:hover {color: #fff}	/* 鼠标移动到链接上 */
+a:active {color: #fff}	/* 选定的链接 */
+.c-item-img img{
+    width: 100%;
+    height: auto;
+}
+.c-item-title{
+    text-align: center;
+    font-size: 18px;
+}

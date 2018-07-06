@@ -5,8 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title><%=title%></title>
+    <link rel="stylesheet" href="/public/css/base.css">
+    <link rel="stylesheet" href="/public/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/public/css/index.css">
 </head>
 <body>
-    123
+    <div id="container" class="container-fluid">
+        <div class="channels">
+            <h4>最新电影</h4>
+            <div class="c-items row">
+                <% for(var i=0; i<10; i++) { %>      
+                <div class="col-lg-2">
+                        <a href="#">
+                            <p class="c-item-img">
+                                <img src="//image.aaxxy.com/image.php?url=https://puui.qpic.cn/vcover_vt_pic/0/639agzdh10yu2q21529307334/260" />
+                            </p>
+                            <p class="c-item-title">
+                                扶摇
+                            </p>
+                        </a>
+                    </div>
+                <% } %>     
+            </div>
+        </div>
+    </div>
 </body>
 </html>
