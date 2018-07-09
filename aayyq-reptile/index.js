@@ -9,6 +9,8 @@ const QCError = require('../util/error');
 const SearchMobile = require('./search/searchMobile');
 const HomeMobile = require('./home/homeMobile');
 const seleniumProxy = require('selenium-webdriver/proxy');
+const width = 1;
+const height = 1;
 
 const search = async (title = '', proxy) => {
   if (!title) {
@@ -47,6 +49,7 @@ const newMovies = async (proxy = {}) => {
   try {
     const chromeOptions = new Options();
     chromeOptions.setMobileEmulation({ deviceName: 'Nexus 5X' });
+    chromeOptions.headless().windowSize({ width, height });
     driver = await new Builder()
       .forBrowser('chrome')
       .setChromeOptions(chromeOptions)
@@ -71,10 +74,12 @@ const newMovies = async (proxy = {}) => {
 const goToDetail = async (proxy = {}, host, title) => {
   let driver = null;
   try {
+    const chromeOptions = new Options();
+    chromeOptions.setMobileEmulation({ deviceName: 'Nexus 5X' });
+    chromeOptions.headless().windowSize({ width, height });
     driver = await new Builder()
       .forBrowser('chrome')
-      .setChromeOptions(
-        new Options().setMobileEmulation({ deviceName: 'Nexus 5X' }))
+      .setChromeOptions(chromeOptions)
       .setProxy(seleniumProxy.manual({
         http: `${proxy.ip}:${proxy.port}`,
         bypass: null,
