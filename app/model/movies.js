@@ -57,6 +57,8 @@ module.exports = app => {
       fields: [ 'images_id' ],
     }],
   });
-
+  Movies.associate = function() {
+    app.model.Movies.belongsTo(app.model.Images, { foreignKey:'images_id', targetKey:'id'});
+  }
   return Movies;
 };

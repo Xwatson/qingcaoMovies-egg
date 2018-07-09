@@ -17,9 +17,21 @@ class MovieService extends Service {
   }
   async getList(where = {}, page, size) {
     return await this.ctx.model.Movies.findAndCountAll({
+      include: [
+        { model: Images, required: true}
+      ],
       where,
       limit: size || 10, // 返回数据量
       offset: page - 1, // 数据偏移量
+      order: 'updatedAt DESC',
+    });
+  }
+
+  async getMovies(where = {}) {
+    return await this.ctx.model.Movies.findAll({
+      include: [ {model: this.ctx.model.Images, required: true} ],
+      where,
+      order: [ [ 'updated_at', 'DESC' ] ],
     });
   }
   async getMovieById(id) {
