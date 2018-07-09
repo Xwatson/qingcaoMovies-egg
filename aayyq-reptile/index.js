@@ -49,7 +49,7 @@ const newMovies = async (proxy = {}) => {
   try {
     const chromeOptions = new Options();
     chromeOptions.setMobileEmulation({ deviceName: 'Nexus 5X' });
-    chromeOptions.headless().windowSize({ width, height });
+    // chromeOptions.headless().windowSize({ width, height });
     driver = await new Builder()
       .forBrowser('chrome')
       .setChromeOptions(chromeOptions)
@@ -76,7 +76,7 @@ const goToDetail = async (proxy = {}, host, title) => {
   try {
     const chromeOptions = new Options();
     chromeOptions.setMobileEmulation({ deviceName: 'Nexus 5X' });
-    chromeOptions.headless().windowSize({ width, height });
+    // chromeOptions.headless().windowSize({ width, height });
     driver = await new Builder()
       .forBrowser('chrome')
       .setChromeOptions(chromeOptions)
