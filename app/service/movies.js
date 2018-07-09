@@ -35,7 +35,9 @@ class MovieService extends Service {
     });
   }
   async getMovieById(id) {
-    return await this.ctx.model.Movies.findById(id);
+    return await this.ctx.model.Movies.findById(id, {
+      include: [ {model: this.ctx.model.Images, required: true} ],
+    });
   }
   async getMovieByAQId(id) {
     return await this.ctx.model.Movies.findOne({ where: { aayyq_id: id } });

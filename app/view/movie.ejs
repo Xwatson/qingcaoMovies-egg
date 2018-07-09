@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title><%=movie.title%>-<%=title%></title>
+    <link rel="stylesheet" href="/public/css/base.css">
+    <link rel="stylesheet" href="/public/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/public/css/index.css">
+    <link href="//vjs.zencdn.net/5.19/video-js.min.css" rel="stylesheet">
+</head>
+<body>
+    <% var play_lines = JSON.parse(movie.play_lines)
+        var firstLine = play_lines[0] ? (play_lines[0].lines[0] || {}) : {}
+    %>
+    <div id="container" class="container-fluid row movie-detail">
+        <div class="col-lg-6">
+            <a href="javascript:;" onclick="onVideoClick()">
+                <video style="width: 100%"
+                    id="movie-player"
+                    class="video-js"
+                    preload="auto"
+                    data-setup='{}'>
+                    <source src="<%=firstLine.playUrl%>" id="source" type="video/mp4"></source>
+                </video>
+            </a>
+        </div>
+        <div class="col-lg-6">
+            <ul>
+                <% for (var i=0; i < play_lines.length; i++) { %>
+                    <li>
+                        <dl>
+                            <dt><%=play_lines[i].lineName%></dt>
+                            <% for (var k=0; k < play_lines[i].lines.length; k++) { %>
+                                <dd><a href="javascript:;" onclick="onLineClick('<%=play_lines[i].lines[k].playUrl%>')"><%=play_lines[i].lines[k].name%></a></dd>
+                            <% } %>
+                        </dl>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+    <script src="//vjs.zencdn.net/5.19/video.min.js"></script>
+    <script>
+        var options = {
+            width: window.innerWidth / 2.1
+        };
+
+        var player = videojs('movie-player', options, function onPlayerReady() {
+            videojs.log('Your player is ready!');
+            this.play();
+            this.on('ended', function() {
+                videojs.log('Awww...over so soon?!');
+            });
+        });
+        function onLineClick(url) {
+            player.src(url);
+            player.play();
+        }
+        function onVideoClick() {
+            player.requestFullscreen()
+        }
+    </script>
+</body>
+</html>
