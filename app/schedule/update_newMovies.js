@@ -22,10 +22,11 @@ class UpdateCache extends Subscription {
       this.proxys = await getZhiMaIp();
       this.startGetNewMovies();
     } catch (e) {
-      console.log('getProxy error：', typeof e, e);
+      this.ctx.logger.warn('getProxy error：', typeof e, e);
     }
   }
   async startGetNewMovies() {
+    this.ctx.logger.info('开始获取aaqqy最新电影');
     if (this.proxys.length) {
       try {
         this.movies = await aayyq.newMovies(this.proxys[this.proxyIndex]);
@@ -36,14 +37,14 @@ class UpdateCache extends Subscription {
             this.proxys = await getZhiMaIp();
             await this.getDetail();
           } else if (e.message.indexOf('valid session ID') > -1) {
-            console.log('驱动遇到错误：', e.message);
+            this.ctx.logger.info('驱动遇到错误：%s', e.message);
             return;
           }
         }
-        console.log('开始更新电影', this.movies);
+        this.ctx.logger.info('开始更新电影: %j', this.movies);
         this.ctx.service.movies.batchCreateAaqqyNewMovies(this.movies);
       } catch (e) {
-        console.log('ERR：', typeof e, e);
+        this.ctx.logger.info('ERR：%s', e);
         if (e.TimeoutError === 'timeout' || e.code === responseCode.proxyUnavailable) {
           // this.proxyIndex++;
           this.proxys = await getZhiMaIp();
@@ -51,7 +52,7 @@ class UpdateCache extends Subscription {
         }
       }
     } else {
-      console.log('错误：未获取到代理。');
+      this.ctx.logger.warn('错误：未获取到代理。');
     }
   }
   async getDetail() {
@@ -83,7 +84,7 @@ class UpdateCache extends Subscription {
   }
   async verifyProxyExpireTime(proxy) {
     if (Date.now >= new Date(proxy.expire_time).getTime()) {
-      console.log(`代理：${proxy.ip} ${proxy.city}已过期，正在重新获取代理...`);
+      this.ctx.logger.warn(`代理：${proxy.ip} ${proxy.city}已过期，正在重新获取代理...`);
       this.proxyIndex = 0;
       this.proxys = await getZhiMaIp();
     }

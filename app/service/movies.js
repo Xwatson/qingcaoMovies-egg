@@ -77,7 +77,7 @@ class MovieService extends Service {
           createMovies.push(m1);
         }
       });
-      // console.log('需要插入的电影：', createMovies);
+      // this.ctx.logger.info('需要插入的电影：', createMovies);
       // 获取电影资源
       let aaqqyMovie = {};
       const searchMovie = new SearchMovie();
@@ -87,10 +87,10 @@ class MovieService extends Service {
           aaqqyMovie = await searchMovie.search(c_Movie.title, aaqqyMovie.proxy);
         } catch (error) {
           if (error.code === responseCode.proxyError) {
-            console.log('获取代理错误: ', error.message);
+            this.ctx.logger.info('获取代理错误: ', error.message);
             return;
           }
-          console.log(`电影《${c_Movie.title}》未收录`, error);
+          this.ctx.logger.info(`电影《${c_Movie.title}》未收录`, error);
         }
         if (aaqqyMovie.movie) {
           if (aaqqyMovie.movie.aayyq_id) {
@@ -112,13 +112,13 @@ class MovieService extends Service {
           c_Movie.images_id = _createImage.id;
           const _create = await this.create(c_Movie);
           if (_create) {
-            console.log(`插入电影《${_create.title}》成功`);
+            this.ctx.logger.info(`插入电影《${_create.title}》成功`);
           }
         } else {
-          console.log(`电影《${c_Movie.title}》图片插入失败`);
+          this.ctx.logger.info(`电影《${c_Movie.title}》图片插入失败`);
         }
       }
-      console.log('搜索结束' + (!createMovies.length ? '，数据库已包含最新上映电影。' : ''));
+      this.ctx.logger.info('搜索结束' + (!createMovies.length ? '，数据库已包含最新上映电影。' : ''));
     }
   }
   async batchCreateAaqqyNewMovies(movies = []) {
@@ -140,7 +140,7 @@ class MovieService extends Service {
           where: { aayyq_id: c_Movie.aayyq_id },
         });
         if (_update) {
-          console.log(`修改电影《${c_Movie.title}》成功`);
+          this.ctx.logger.info(`修改电影《${c_Movie.title}》成功`);
         }
       } else {
         // 插入图片
@@ -150,7 +150,7 @@ class MovieService extends Service {
         if (_createImage) {
           c_Movie.images_id = _createImage.id;
         } else {
-          console.log(`电影《${c_Movie.title}》图片插入失败`);
+          this.ctx.logger.warn(`电影《${c_Movie.title}》图片插入失败`);
           return;
         }
         const _create = await this.create({
@@ -170,11 +170,11 @@ class MovieService extends Service {
           play_lines: JSON.stringify(c_Movie.playLines),
         });
         if (_create) {
-          console.log(`插入电影《${_create.title}》成功`);
+          this.ctx.logger.info(`插入电影《${_create.title}》成功`);
         }
       }
     }
-    console.log('更新aayyq最新电影结束');
+    this.ctx.logger.info('更新aayyq最新电影结束');
   }
 }
 
