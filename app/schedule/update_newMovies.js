@@ -44,7 +44,7 @@ class UpdateCache extends Subscription {
         this.ctx.logger.info('开始更新电影: %j', this.movies);
         this.ctx.service.movies.batchCreateAaqqyNewMovies(this.movies);
       } catch (e) {
-        this.ctx.logger.info('ERR：%s', e);
+        this.ctx.logger.warn('ERR：%s', e);
         if (e.TimeoutError === 'timeout' || e.code === responseCode.proxyUnavailable) {
           // this.proxyIndex++;
           this.proxys = await getZhiMaIp();
@@ -56,6 +56,7 @@ class UpdateCache extends Subscription {
     }
   }
   async getDetail() {
+    this.ctx.logger.info('开始获取详情。');
     for (const m1 in this.movies) {
       if (this.movies[m1].detail.lines) {
         continue;
@@ -66,6 +67,7 @@ class UpdateCache extends Subscription {
         const re_lines = [];
         lineName = this.movies[m1].lines[m2].lineName;
         for (const m3 in this.movies[m1].lines[m2].lines) {
+          this.ctx.logger.info(`正在获取电影《${this.movies[m1].title}》的${this.movies[m1].lines[m2].lineName}-${this.movies[m1].lines[m2].lines[m3].name}线路`);
           // 判断是否过期
           await this.verifyProxyExpireTime(this.proxys[this.proxyIndex]);
           const playUrl = await aayyq.goToDetail(this.proxys[this.proxyIndex], this.movies[m1].lines[m2].lines[m3].linkUrl, this.movies[m1].title);
