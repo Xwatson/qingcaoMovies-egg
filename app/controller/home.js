@@ -4,7 +4,8 @@ const Controller = require('egg').Controller;
 
 class HomeController extends Controller {
   async index() {
-    await this.ctx.render('home.ejs', { title: '青草影院' })
+    const movies = await this.ctx.service.movies.getMovies({});
+    await this.ctx.render('home.ejs', { title: '青草影院', movies });
   }
 }
 
