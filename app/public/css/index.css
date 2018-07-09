@@ -27,3 +27,6 @@ a:active {color: #fff}	/* 选定的链接 */
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+.movie-detail{
+    padding-top: 20px
+}

@@ -16,7 +16,7 @@
             <div class="c-items row">
                 <% for(var i=0; i< movies.length; i++) { %>
                 <div class="col-lg-2">
-                        <a href="#">
+                        <a href="/movie/<%= movies[i].id %>">
                             <p class="c-item-img">
                                 <img src="/public/images/default.png" data-src="<%= movies[i].image.large %>" />
                             </p>
