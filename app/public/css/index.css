@@ -30,3 +30,7 @@ a:active {color: #fff}	/* 选定的链接 */
 .movie-detail{
     padding-top: 20px
 }
+#jquery_jplayer video {
+    width: 100% !important;
+    height: auto !important;
+}
